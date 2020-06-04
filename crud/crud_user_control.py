@@ -48,8 +48,8 @@ def user_menu_dict():
                                   {'id': 42, 'auth': '用例查询', 'path': 'checkWebCase'}]
                      },
                     {'id': 5, 'auth': '接口测试',
-                     'children': [{'id': 51, 'auth': '新增用例', 'path': 'newInterface'},
-                                  {'id': 52, 'auth': '用例查询', 'path': 'checkInterface'}]
+                     'children': [{'id': 51, 'auth': '接口项目', 'path': 'checkInterface'},
+                                  {'id': 52, 'auth': '新增用例', 'path': 'newInterface'}]
                      },
                     {'id': 6, 'auth': '性能测试',
                      'children': [{'id': 61, 'auth': '新增用例', 'path': 'newPerformance'},
@@ -74,6 +74,6 @@ def get_user(db: Session, accent: str):
 
 
 # 注册账号
-def register_accent(db: Session, accent: str, password_hash: str, create_time):
-    db.add(UserControl(username=accent, password=password_hash, is_active=0, create_time=create_time))
+def register_accent(db: Session, accent: str, password_hash: str, create_time, name: str):
+    db.add(UserControl(username=accent, password=password_hash, is_active=0, name=name, create_time=create_time))
     db.commit()

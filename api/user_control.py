@@ -25,7 +25,7 @@ async def registered_user(item: RegisteredForm, db: Session = Depends(get_db)):
         now = datetime.today()
         password = item.password[6:-4]
         hash_password = get_password_hash(password)
-        register_accent(db=db, accent=item.username, password_hash=hash_password, create_time=now)
+        register_accent(db=db, accent=item.username, password_hash=hash_password, name=item.name, create_time=now)
         return {'meta': {'status': 201, 'msg': '注册账号成功,请联系管理员激活账号'}}
 
 

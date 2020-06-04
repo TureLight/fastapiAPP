@@ -105,7 +105,7 @@ def crud_get_under_project(db: Session, id):
         join(WorkReport, WorkReport.project_id == WorkProject.id). \
         filter(WorkProject.id == id). \
         all()
-    print(result)
+    # print(result)
     return {'workReportList': [{'project_name': item.project_name, 'test_master': item.test_master,
                                 'tester': item.tester, 'today_work': item.today_work,
                                 'today_problem': item.today_problem, 'urgent_problem': item.urgent_problem,

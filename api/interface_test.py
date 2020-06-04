@@ -62,7 +62,7 @@ async def update_project(data: UpdateProjectModel, db: Session = Depends(get_db)
         return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
 
 
-@router.post('/delete_project/')
+@router.get('/delete_project/')
 def delete_project(id, user, db: Session = Depends(get_db)):
     try:
         crud_delete_project(db=db, id=id, operator=user)

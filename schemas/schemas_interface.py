@@ -3,25 +3,23 @@ from pydantic import BaseModel
 
 
 class CreateProjectModel(BaseModel):
-    id: int
+    id: int = None
     name: str
     tester: str
-    virtualenv: int
+    virtualenv: str
     host: str
     com_header: str
     operator: str
-    sys_name: str
 
 
 class UpdateProjectModel(BaseModel):
-    id: int
+    id: int = None
     name: str
     tester: str
-    virtualenv: int
+    virtualenv: str
     host: str
     com_header: str
     operator: str
-    sys_name: str
 
 
 

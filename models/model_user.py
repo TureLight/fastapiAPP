@@ -8,6 +8,7 @@ class UserControl(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
     password = Column(String)
+    name = Column(String)
     is_active = Column(Boolean)
     create_time = Column(DateTime)
 

@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Header, Depends
+from starlette.middleware.cors import CORSMiddleware
+
 from api import user_control, work_report, interface_test
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -14,6 +16,15 @@ SECRET_KEY = 'N9sbUevTrCkfIWC50PDdyIwJoqHYLq7+duQ9rRdBogTgA/T/9TeDglzDBRrHExROgz
 ALGORITHM = 'HS256'
 # 过期时间
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
+
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins=['*'],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 class TokenError(Exception):
@@ -44,14 +55,14 @@ app.include_router(user_control.router,
                    tags=['user'])
 app.include_router(work_report.router,
                    prefix='/work',
-                   tags=['work']
-                   # dependencies=[Depends(get_token_header)],
+                   tags=['work'],
+                   dependencies=[Depends(get_token_header)],
                    # responses={'meta': {'status': 403, 'msg': 'token已过期'}}
                    )
 app.include_router(interface_test.router,
                    prefix='/interface',
-                   tags=['interface']
-                   # dependencies=[Depends(get_token_header)],
+                   tags=['interface'],
+                   dependencies=[Depends(get_token_header)],
                    # responses={'meta': {'status': 403, 'msg': 'token已过期'}}
                    )
 

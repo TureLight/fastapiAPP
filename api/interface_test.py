@@ -1,17 +1,20 @@
 from datetime import datetime, date
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 from common.database import get_db
 from sqlalchemy.orm import Session
 from models.model_interface import ApiProject, CaseSet, ApiCase, ApiStep, TestData
 from models.model_sys import SystemName
 from schemas.schemas_interface import (CreateProjectModel,
                                        UpdateProjectModel,
+CreateTestCaseSchema
                                        )
 from crud.crud_interface_project import (crud_get_project,
                                          crud_create_project,
                                          crud_get_edit_project,
                                          crud_update_project,
-                                         crud_delete_project
+                                         crud_delete_project,
+crud_create_case_view,
+crud_create_case
                                          )
 
 router = APIRouter()
@@ -63,12 +66,26 @@ async def update_project(data: UpdateProjectModel, db: Session = Depends(get_db)
 
 
 @router.get('/delete_project/')
-def delete_project(id, user, db: Session = Depends(get_db)):
+async def delete_project(id, user, db: Session = Depends(get_db)):
     try:
         crud_delete_project(db=db, id=id, operator=user)
         return {'meta': {'status': 201, 'msg': '删除项目成功！'}}
     except Exception as e:
         return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
+
+
+@router.get('/ready_create_case/')
+def create_case_view(db: Session = Depends(get_db)):
+    pass
+
+
+@router.post('/create_case/')
+def create_case(data: CreateTestCaseSchema, background_task: BackgroundTasks, db: Session = Depends(get_db)):
+    # background_task.add_task(crud_create_case(db=db, data=data))
+    return {}
+
+
+
 
 
 

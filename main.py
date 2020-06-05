@@ -54,13 +54,13 @@ app.include_router(user_control.router,
                    prefix='/api',
                    tags=['user'])
 app.include_router(work_report.router,
-                   prefix='/work',
+                   prefix='/api/work',
                    tags=['work'],
                    dependencies=[Depends(get_token_header)],
                    # responses={'meta': {'status': 403, 'msg': 'token已过期'}}
                    )
 app.include_router(interface_test.router,
-                   prefix='/interface',
+                   prefix='/api/interface',
                    tags=['interface'],
                    dependencies=[Depends(get_token_header)],
                    # responses={'meta': {'status': 403, 'msg': 'token已过期'}}

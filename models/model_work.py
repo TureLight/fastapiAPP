@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Boolean, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Integer, Text
 from common.database import Base
 
 
@@ -15,7 +15,7 @@ class WorkProject(Base):
     submission_time = Column(Date)
     online_time = Column(Date)
     create_time = Column(DateTime)
-    is_delete = Column(Boolean)
+    is_delete = Column(Integer)
 
 
 class WorkReport(Base):
@@ -26,6 +26,6 @@ class WorkReport(Base):
     today_problem = Column(Text)
     urgent_problem = Column(Text)
     create_time = Column(Date)
-    is_delete = Column(Boolean)
+    is_delete = Column(Integer)
     project_id = Column(Integer, ForeignKey('work_project.id'))
 

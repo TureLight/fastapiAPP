@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Boolean, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Integer, Text
 from common.database import Base
 
 
@@ -10,7 +10,7 @@ class SystemName(Base):
     create_time = Column(DateTime)
     update_time = Column(DateTime)
     operator = Column(String, unique=True)
-    is_delete = Column(Boolean)
+    is_delete = Column(Integer)
 
 
 class SystemModule(Base):
@@ -21,7 +21,7 @@ class SystemModule(Base):
     create_time = Column(DateTime)
     update_time = Column(DateTime)
     operator = Column(String, unique=True)
-    is_delete = Column(Boolean)
+    is_delete = Column(Integer)
     sys_key = Column(Integer, ForeignKey('sys_name.id'))
 
 
@@ -34,5 +34,5 @@ class SystemApi(Base):
     create_time = Column(DateTime)
     update_time = Column(DateTime)
     operator = Column(String, unique=True)
-    is_delete = Column(Boolean)
+    is_delete = Column(Integer)
     module_key = Column(Integer, ForeignKey('sys_module.id'))

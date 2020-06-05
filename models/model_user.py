@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Boolean, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Integer, Text
 from common.database import Base
 
 
@@ -9,7 +9,7 @@ class UserControl(Base):
     username = Column(String, unique=True)
     password = Column(String)
     name = Column(String)
-    is_active = Column(Boolean)
+    is_active = Column(Integer)
     create_time = Column(DateTime)
 
 

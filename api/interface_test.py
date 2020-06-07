@@ -6,7 +6,8 @@ from models.model_interface import ApiProject, CaseSet, ApiCase, ApiStep, TestDa
 from models.model_sys import SystemName
 from schemas.schemas_interface import (CreateProjectModel,
                                        UpdateProjectModel,
-CreateTestCaseSchema
+CreateTestCaseSchema,
+TestStep
                                        )
 from crud.crud_interface_project import (crud_get_project,
                                          crud_create_project,
@@ -14,7 +15,10 @@ from crud.crud_interface_project import (crud_get_project,
                                          crud_update_project,
                                          crud_delete_project,
 crud_create_case_view,
-crud_create_case
+crud_create_case,
+crud_to_test_step,
+crud_insert_step,
+crud_insert_assert
                                          )
 
 router = APIRouter()
@@ -75,22 +79,25 @@ async def delete_project(id, user, db: Session = Depends(get_db)):
 
 
 @router.get('/ready_create_case/')
-def create_case_view(db: Session = Depends(get_db)):
+async def create_case_view(db: Session = Depends(get_db)):
     res = crud_create_case_view(db=db)
     return {'data': res,
-        'meta': {'status': 200, 'msg': '成功！'}}
+            'meta': {'status': 200, 'msg': '成功！'}}
 
 
 @router.post('/create_case/')
-def create_case(data: CreateTestCaseSchema, background_task: BackgroundTasks, db: Session = Depends(get_db)):
-    # background_task.add_task(crud_create_case(db=db, data=data))
-    return {}
+def create_case(data: CreateTestCaseSchema, db: Session = Depends(get_db)):
+    res = crud_create_case(db=db, data=data)
+    # crud_insert_step(db=db, data=data)
+    # crud_insert_assert(db=db, data=data)
+    return res
 
 
-@router.post('/test_step/')
-def to_test_step(data: CreateTestCaseSchema):
-    print(data)
-    return {'meta': {'status': 400, 'msg': 'zidingyi'}}
+@router.post('/to_test_step/')
+async def to_test_step(data: TestStep):
+    res = crud_to_test_step(data=data)
+    return res
+
 
 
 

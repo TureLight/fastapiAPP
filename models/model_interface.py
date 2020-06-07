@@ -55,6 +55,7 @@ class ApiStep(Base):
     tear_down = Column(Integer)
     url = Column(String)
     method = Column(String)
+    variable = Column(String)
     headers = Column(String)
     params = Column(String)
     form_data = Column(String)

@@ -10,7 +10,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/token')
 # openssl rand -base64 64
 SECRET_KEY = 'N9sbUevTrCkfIWC50PDdyIwJoqHYLq7+duQ9rRdBogTgA/T/9TeDglzDBRrHExROgzvIe4WFPMajNyOn2iEBBA=='
 ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 60*12
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -49,7 +49,8 @@ def user_menu_dict():
                      },
                     {'id': 5, 'auth': '接口测试',
                      'children': [{'id': 51, 'auth': '接口项目', 'path': 'interfaceProject'},
-                                  {'id': 52, 'auth': '接口用例', 'path': 'interfaceCase'}]
+                                  {'id': 52, 'auth': '接口用例', 'path': 'interfaceCase'},
+                                  {'id': 53, 'auth': '修改用例', 'path': 'editInterfaceCase'}]
                      },
                     {'id': 6, 'auth': '性能测试',
                      'children': [{'id': 61, 'auth': '新增用例', 'path': 'newPerformance'},

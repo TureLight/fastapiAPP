@@ -7,7 +7,7 @@ from datetime import datetime
 def get_work_report(db: Session, page_num: int, page_size: int, query: str = None):
     now = (datetime.today()).strftime('%Y-%m-%d')
     project_obj = db.query(WorkProject.id, WorkProject.project_name).filter(WorkProject.is_delete == 0).all()
-    if query or query != '':
+    if query is not None:
         check_num = db.query(func.count(WorkReport.id)). \
             join(WorkProject, WorkProject.id == WorkReport.project_id). \
             filter(WorkProject.is_delete == 0, WorkReport.is_delete == 0, WorkReport.create_time == now,
@@ -63,7 +63,7 @@ def get_project(db: Session, page_num: int, page_size: int, query: str = None):
     off_set = int(page_size)*(int(page_num)-1)
     limit = int(page_size)
     # print(query)
-    if query or query != '':
+    if query is not None:
         check_num = db.query(func.count(WorkProject.id)). \
             filter(WorkProject.is_delete == 0,
                    or_(WorkProject.project_name.like('%{}%'.format(query)),

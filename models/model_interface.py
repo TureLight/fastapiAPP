@@ -51,7 +51,7 @@ class ApiStep(Base):
     step = Column(Integer)
     name = Column(String, unique=True)
     desc = Column(String)
-    up_set = Column(Integer)
+    set_up = Column(Integer)
     tear_down = Column(Integer)
     url = Column(String)
     method = Column(String)
@@ -68,7 +68,7 @@ class ApiStep(Base):
 
 
 class TestData(Base):
-    __tablename__ = 'test_data'
+    __tablename__ = 'assert_data'
 
     id = Column(Integer, primary_key=True)
     assert_method = Column(String)

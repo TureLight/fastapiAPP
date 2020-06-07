@@ -48,8 +48,8 @@ def user_menu_dict():
                                   {'id': 42, 'auth': '用例查询', 'path': 'checkWebCase'}]
                      },
                     {'id': 5, 'auth': '接口测试',
-                     'children': [{'id': 51, 'auth': '接口项目', 'path': 'checkInterface'},
-                                  {'id': 52, 'auth': '新增用例', 'path': 'newInterface'}]
+                     'children': [{'id': 51, 'auth': '接口项目', 'path': 'interfaceProject'},
+                                  {'id': 52, 'auth': '接口用例', 'path': 'interfaceCase'}]
                      },
                     {'id': 6, 'auth': '性能测试',
                      'children': [{'id': 61, 'auth': '新增用例', 'path': 'newPerformance'},

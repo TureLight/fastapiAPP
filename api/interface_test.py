@@ -21,7 +21,7 @@ router = APIRouter()
 
 
 @router.get('/get_interface_project/')
-async def get_interface_project(query, page_num, page_size, db: Session = Depends(get_db)):
+async def get_interface_project(page_num, page_size, query: str = None, db: Session = Depends(get_db)):
     try:
         result = crud_get_project(db=db, query=query, page_num=page_num, page_size=page_size)
         return {'data': result,
@@ -76,13 +76,21 @@ async def delete_project(id, user, db: Session = Depends(get_db)):
 
 @router.get('/ready_create_case/')
 def create_case_view(db: Session = Depends(get_db)):
-    pass
+    res = crud_create_case_view(db=db)
+    return {'data': res,
+        'meta': {'status': 200, 'msg': '成功！'}}
 
 
 @router.post('/create_case/')
 def create_case(data: CreateTestCaseSchema, background_task: BackgroundTasks, db: Session = Depends(get_db)):
     # background_task.add_task(crud_create_case(db=db, data=data))
     return {}
+
+
+@router.post('/test_step/')
+def to_test_step(data: CreateTestCaseSchema):
+    print(data)
+    return {'meta': {'status': 400, 'msg': 'zidingyi'}}
 
 
 

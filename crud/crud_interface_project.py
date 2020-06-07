@@ -13,11 +13,12 @@ def crud_get_project(db: Session, page_num: int, page_size: int, query: str = No
     off_set = int(page_size)*(int(page_num)-1)
     limit = int(page_size)
     choice_list = db.query(UserControl.id, UserControl.name).filter(UserControl.is_active == 1).all()
-    if query is None or query == '':
+    if query is None:
         num = db.query(func.count(ApiProject.id)).\
             filter(ApiProject.is_delete == 0).\
             scalar()
-        result = db.query(ApiProject.id, ApiProject.name, ApiProject.tester, ApiProject.virtualenv, ApiProject.host).\
+        result = db.query(ApiProject.id, ApiProject.name, ApiProject.tester, ApiProject.virtualenv, ApiProject.host,
+                          ApiProject.com_header).\
             filter(ApiProject.is_delete == 0).\
             order_by(ApiProject.create_time.desc()).\
             offset(off_set).\
@@ -27,7 +28,8 @@ def crud_get_project(db: Session, page_num: int, page_size: int, query: str = No
         num = db.query(func.count(ApiProject.id)).\
             filter(ApiProject.is_delete == 0, ApiProject.name.like('%{}%'.format(query)))\
             .scalar()
-        result = db.query(ApiProject.id, ApiProject.name, ApiProject.tester, ApiProject.virtualenv, ApiProject.host). \
+        result = db.query(ApiProject.id, ApiProject.name, ApiProject.tester, ApiProject.virtualenv, ApiProject.host,
+                          ApiProject.com_header). \
             filter(ApiProject.is_delete == 0, ApiProject.name.like('%{}%'.format(query))).\
             order_by(ApiProject.create_time.desc()).\
             offset(off_set).\
@@ -36,7 +38,7 @@ def crud_get_project(db: Session, page_num: int, page_size: int, query: str = No
     return {'total': num,
             'page_num': page_num,
             'project_list': [{"id": item.id, 'name': item.name, 'tester': item.tester,
-                              'virtualenv': item.virtualenv, 'host': item.host
+                              'virtualenv': item.virtualenv, 'host': item.host, 'com_header': item.com_header
                               } for item in result
                              ],
             'choice_list': [{'id': item.id, 'name': item.name} for item in choice_list]
@@ -113,19 +115,17 @@ def crud_delete_project(db: Session, id, operator):
 
 def crud_create_case_view(db: Session):
     res1 = db.query(ApiProject.id, ApiProject.name, ApiProject.host).filter(ApiProject.is_delete == 0).all()
-    res2 = db.query(CaseSet.id, CaseSet.name).filter(CaseSet.is_delete == 0).all()
     return {'project_list': [{'id': item.id, 'name': item.name, 'host': item.host} for item in res1],
-            'case_set_list': [{'id': item.id, 'name': item.name} for item in res2]
             }
 
 
 def crud_create_case(db: Session, data: CreateTestCaseSchema):
     now = datetime.today()
-    db.add(ApiCase(name=data.case_name, desc=data.case_desc, create_time=now, update_time=now, operator=data.operator,
+    db.add(ApiCase(name=data.test_case.name, desc=data.test_case.desc, create_time=now, update_time=now, operator=data.operator,
                    api_project_key=data.project_id, case_set_key=data.case_set_id, is_delete=0))
     db.commit()
-    this_case_id = db.query(ApiCase.id).filter(ApiCase.name == data.case_name).one_or_none()
-    all_obj = [ApiStep(step=item.step_num, name=item.ster_name, desc=item.step_desc, up_set=item.up_set,
+    this_case_id = db.query(ApiCase.id).filter(ApiCase.name == data.test_case.name).one_or_none()
+    all_obj = [ApiStep(step=item.step_num, name=item.ster_name, desc=item.step_desc, set_up=item.set_up,
                        tear_down=item.tear_down, url=item.url, method=item.method, headers=item.headers,
                        params=item.params, form_data=item.form_data, json_data=item.json_data,
                        need_assert=item.need_assert, create_time=now, update_time=now, operator=data.operator,

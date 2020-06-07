@@ -25,7 +25,7 @@ async def get_menu(menu_dict: dict = Depends(user_menu_dict)):
 
 
 @router.get('/workReport/')
-async def today_work(userName: str, query: str, pageNum: int, pageSize: int, db: Session = Depends(get_db)):
+async def today_work(userName: str, pageNum: int, pageSize: int, query: str = None, db: Session = Depends(get_db)):
     page_size = int(pageSize)
     page_num = int(pageNum)
     response = {'meta': {'status': 200, 'msg': '本日报告获取成功'}}
@@ -128,7 +128,7 @@ async def delete_report(id, db: Session = Depends(get_db)):
 
 
 @router.get('/show_project/')
-async def show_project(userName, pageNum, pageSize, query, db: Session = Depends(get_db)):
+async def show_project(userName, pageNum, pageSize, query: str = None, db: Session = Depends(get_db)):
     response = {'meta': {'status': 200, 'msg': '项目获取成功'}}
     # try:
     res = get_project(db=db, page_num=pageNum, page_size=pageSize, query=query)

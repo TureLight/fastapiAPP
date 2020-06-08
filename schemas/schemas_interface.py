@@ -2,6 +2,12 @@ from typing import List
 from pydantic import BaseModel, Schema
 
 
+class QuerySchema(BaseModel):
+    query: int
+    page_num: int
+    page_size: int
+
+
 class CreateProjectModel(BaseModel):
     id: int = None
     name: str

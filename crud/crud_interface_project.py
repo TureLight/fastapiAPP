@@ -9,7 +9,12 @@ from common.database import OperatorMysql
 import pymysql.cursors
 import time
 import re
-from schemas.schemas_interface import CreateProjectModel, UpdateProjectModel, CreateTestCaseSchema,TestStep
+from schemas.schemas_interface import (CreateProjectModel,
+                                       UpdateProjectModel,
+                                       CreateTestCaseSchema,
+                                       TestStep,
+                                       QuerySchema
+                                       )
 
 
 # 获取项目
@@ -120,8 +125,8 @@ def crud_delete_project(db: Session, id, operator):
 # 返回测试项目
 def crud_query_project(db: Session):
     res1 = db.query(ApiProject.id, ApiProject.name, ApiProject.host).filter(ApiProject.is_delete == 0).all()
-    return {'project_list': [{'id': item.id, 'name': item.name, 'host': item.host} for item in res1],
-            }
+    res2 = [{'id': item.id, 'name': item.name, 'host': item.host} for item in res1]
+    return res2
 
 
 # 返回测试集合
@@ -129,7 +134,7 @@ def crud_query_case_set():
     conn = OperatorMysql()
     sql = "select id, name from case_set where is_delete=0 "
     res = conn.search(sql)
-    return {'case_set_list': res}
+    return res
 
 
 def crud_insert_step(db: Session, data: CreateTestCaseSchema):
@@ -164,8 +169,8 @@ def crud_create_case(db: Session, data: CreateTestCaseSchema):
     connection = pymysql.connect(host='localhost',
                                  port=3306,
                                  user='root',
-                                 # password='Fr39:.Gzj+WN',
-                                 password='zhangxin123456',
+                                 password='Fr39:.Gzj+WN',
+                                 # password='zhangxin123456',
                                  db='auto_test',
                                  charset='utf8',
                                  cursorclass=pymysql.cursors.DictCursor)
@@ -267,7 +272,7 @@ def crud_to_test_step(data: TestStep):
         return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
 
 
-def crud_return_project_case(query, page_num: int, page_size: int):
+def crud_return_project_case(query: int, page_num: int, page_size: int):
     conn = OperatorMysql()
     sql = "select " \
           "`a`.id case_id, `a`.name case_name, `a`.`desc` case_desc, `as`.step step_num , `as`.name step_name, " \
@@ -277,9 +282,50 @@ def crud_return_project_case(query, page_num: int, page_size: int):
           "from " \
           "(api_case `a` left join api_step `as` on `a`.id = `as`.api_case_key) " \
           "left join assert_data `ad` on `as`.id=`ad`.api_step_key where a.is_delete=0 and `as`.is_delete=0 " \
-          "and ad.is_delete=0 order by a.id  limit %s, %s"
-    res = conn.search(sql, ((page_num-1)*page_size, page_size))
+          "and ad.is_delete=0 and a.api_project_key=%s order by a.id  limit %s, %s"
+    res = conn.search(sql, (query, (page_num-1)*page_size, page_size))
+    return res
+
+
+def crud_return_project_case_total(query: int):
+    conn = OperatorMysql()
+    sql = "select " \
+          "count(as.name) " \
+          "from " \
+          "(api_case `a` left join api_step `as` on `a`.id = `as`.api_case_key) " \
+          "left join assert_data `ad` on `as`.id=`ad`.api_step_key where a.is_delete=0 and `as`.is_delete=0 " \
+          "and ad.is_delete=0 and a.api_project_key=%s"
+    res = conn.search(sql, (query,))
+    return res
+
+
+def crud_return_set_case(query: int, page_num: int, page_size: int):
+    conn = OperatorMysql()
+    sql = "select " \
+          "`a`.id case_id, `a`.name case_name, `a`.`desc` case_desc, `as`.step step_num , `as`.name step_name, " \
+          " `as`.desc step_desc, `as`.set_up, `as`.tear_down, `as`.url, `as`.method, `as`.variable, `as`.headers, " \
+          "`as`.params, `as`.form_data, `as`.json_data, `as`.need_assert, ad.assert_method, ad.exp_statue, " \
+          "ad.exp_extract " \
+          "from " \
+          "(api_case `a` left join api_step `as` on `a`.id = `as`.api_case_key) " \
+          "left join assert_data `ad` on `as`.id=`ad`.api_step_key where a.is_delete=0 and `as`.is_delete=0 " \
+          "and ad.is_delete=0 and a.case_set_key=%s order by a.id  limit %s, %s"
+    res = conn.search(sql, (query, (page_num-1)*page_size, page_size))
+    return res
+
+
+def crud_return_set_case_total(query: int):
+    conn = OperatorMysql()
+    sql = "select " \
+          "count(as.name) " \
+          "from " \
+          "(api_case `a` left join api_step `as` on `a`.id = `as`.api_case_key) " \
+          "left join assert_data `ad` on `as`.id=`ad`.api_step_key where a.is_delete=0 and `as`.is_delete=0 " \
+          "and ad.is_delete=0 and a.case_set_key=%s"
+    res = conn.search(sql, (query,))
+    return res
 
 
 if __name__ == '__main__':
-    crud_return_project_case(1,2,3)
+    print(crud_return_project_case_total(4))
+    print(len(crud_return_project_case(4,1,10)))

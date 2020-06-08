@@ -7,18 +7,22 @@ from models.model_sys import SystemName
 from schemas.schemas_interface import (CreateProjectModel,
                                        UpdateProjectModel,
 CreateTestCaseSchema,
-TestStep
+TestStep,
+QuerySchema
                                        )
 from crud.crud_interface_project import (crud_get_project,
                                          crud_create_project,
                                          crud_get_edit_project,
                                          crud_update_project,
                                          crud_delete_project,
-crud_query_project,
-crud_create_case,
-crud_to_test_step,
-crud_insert_step,
-crud_insert_assert
+                                         crud_query_project,
+                                         crud_create_case,
+                                         crud_to_test_step,
+crud_return_project_case_total,
+crud_return_project_case,
+crud_query_case_set,
+crud_return_set_case,
+crud_return_set_case_total
                                          )
 
 router = APIRouter()
@@ -80,25 +84,70 @@ async def delete_project(id, user, db: Session = Depends(get_db)):
 
 @router.get('/ready_create_case/')
 async def create_case_view(db: Session = Depends(get_db)):
-    res = crud_query_project(db=db)
-    return {'data': res,
-            'meta': {'status': 200, 'msg': '成功！'}}
+    try:
+        res = crud_query_project(db=db)
+        return {'data': {'project_list': res},
+                'meta': {'status': 200, 'msg': '成功！'}}
+    except Exception as e:
+        return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
 
 
 @router.post('/create_case/')
 async def create_case(data: CreateTestCaseSchema, db: Session = Depends(get_db)):
-    res = crud_create_case(db=db, data=data)
-    return res
+    try:
+        res = crud_create_case(db=db, data=data)
+        return res
+    except Exception as e:
+        return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
 
 
 @router.post('/to_test_step/')
 async def to_test_step(data: TestStep):
-    res = crud_to_test_step(data=data)
-    return res
+    try:
+        res = crud_to_test_step(data=data)
+        return res
+    except Exception as e:
+        return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
 
 
-def ready_edit_case():
-    pass
+@router.get('/create_edit_page/')
+def create_edit_case_page(db: Session = Depends(get_db)):
+    try:
+        res1 = crud_query_project(db)
+        res2 = crud_query_case_set()
+        return {'data': {'project_list': res1,
+                         'set_list': res2
+                         },
+                'meta': {'status': 200, 'msg': '获取成功！'}
+                }
+    except Exception as e:
+        return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
+
+
+@router.get('/query_project_case/')
+def query_project_case(query: int, page_num: int, page_size: int):
+    try:
+        res = crud_return_project_case(query, page_num, page_size)
+        total = crud_return_project_case_total(query)
+        return {'data': {'project_case_list': res, 'total': total[0]['count(as.name)']},
+                'meta': {'status': 200, 'msg': '项目获取成功！'}
+                }
+    except Exception as e:
+        return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
+
+
+@router.get('/query_set_case/')
+def query_set_case(query: int, page_num1: int, page_size1: int):
+    try:
+        res = crud_return_set_case(query, page_num1, page_size1)
+        total = crud_return_set_case_total(query)
+        return {'data': {'project_case_list': res, 'total': total[0]['count(as.name)']},
+                'meta': {'status': 200, 'msg': '项目获取成功！'}
+                }
+    except Exception as e:
+        return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
+
+
 
 
 

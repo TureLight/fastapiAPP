@@ -26,7 +26,6 @@ class CaseSet(Base):
     update_time = Column(DateTime)
     operator = Column(String, unique=True)
     is_delete = Column(Integer)
-    project_key = Column(Integer, ForeignKey('api_project.id'))
 
 
 class ApiCase(Base):

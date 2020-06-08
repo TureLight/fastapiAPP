@@ -18,6 +18,8 @@ router = APIRouter()
 
 @router.post('/registered/')
 async def registered_user(item: RegisteredForm, db: Session = Depends(get_db)):
+    if item.password != item.password2:
+        return {'meta': {'status': 401, 'msg': '两次密码不一致,请重新输入!'}}
     db_user = check_same_accent(db, item.username)
     if db_user:
         return {'meta': {'status': 401, 'msg': '账号名称重复,请重新输入!'}}

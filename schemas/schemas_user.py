@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class RegisteredForm(BaseModel):
     username: str
     password: str
+    password2: str
     name: str
 
 

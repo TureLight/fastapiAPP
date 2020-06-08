@@ -37,9 +37,14 @@ def mu():
         print('last')
 
 if __name__ == "__main__":
+    import re
 
-    print(mu())
-    print(datetime.now())
+    x = re.compile(r'^{.*?}$')
+    di = '{123456}'
+    y = re.match(x, di)
+    print(y)
+    # print(mu())
+    # print(datetime.now())
     ############################本章节哈希验证用法############################
     # xxx = get_password_hash('cccccc')
     # yyy = get_password_hash('cccccc')

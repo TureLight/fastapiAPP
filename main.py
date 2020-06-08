@@ -15,7 +15,7 @@ app = FastAPI()
 SECRET_KEY = 'N9sbUevTrCkfIWC50PDdyIwJoqHYLq7+duQ9rRdBogTgA/T/9TeDglzDBRrHExROgzvIe4WFPMajNyOn2iEBBA=='
 ALGORITHM = 'HS256'
 # 过期时间
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 60*12
 
 
 app.add_middleware(
@@ -71,6 +71,6 @@ if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app='main:app',
                 host="127.0.0.1",
-                port=8000,
+                port=8888,
                 # reload=True
                 )

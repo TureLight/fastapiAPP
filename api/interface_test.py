@@ -14,7 +14,7 @@ from crud.crud_interface_project import (crud_get_project,
                                          crud_get_edit_project,
                                          crud_update_project,
                                          crud_delete_project,
-crud_create_case_view,
+crud_query_project,
 crud_create_case,
 crud_to_test_step,
 crud_insert_step,
@@ -80,16 +80,14 @@ async def delete_project(id, user, db: Session = Depends(get_db)):
 
 @router.get('/ready_create_case/')
 async def create_case_view(db: Session = Depends(get_db)):
-    res = crud_create_case_view(db=db)
+    res = crud_query_project(db=db)
     return {'data': res,
             'meta': {'status': 200, 'msg': '成功！'}}
 
 
 @router.post('/create_case/')
-def create_case(data: CreateTestCaseSchema, db: Session = Depends(get_db)):
+async def create_case(data: CreateTestCaseSchema, db: Session = Depends(get_db)):
     res = crud_create_case(db=db, data=data)
-    # crud_insert_step(db=db, data=data)
-    # crud_insert_assert(db=db, data=data)
     return res
 
 
@@ -97,6 +95,10 @@ def create_case(data: CreateTestCaseSchema, db: Session = Depends(get_db)):
 async def to_test_step(data: TestStep):
     res = crud_to_test_step(data=data)
     return res
+
+
+def ready_edit_case():
+    pass
 
 
 

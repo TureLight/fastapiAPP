@@ -7,6 +7,7 @@ import requests
 import uuid
 import datetime
 import re
+import time
 
 app = Celery()
 app.config_from_object("celeryConfig")
@@ -51,25 +52,43 @@ def platform_login(username, url):
         return [False, login.content]
 
 
-# 执行新渠道接口测试
-def platform_runner(username, url, params: tuple, start_date, end_date, one_day, page_size, operator, db: Session):
+# 创建新渠道任务
+def platform_creat(operator, params, db: Session):
+    conn = OperatorMysql()
     res = db.query(DApiModule.id, DApiModule.name, DApiModule.method, DApiModule.variable, DApiModule.headers,
                    DApiModule.params, DApiModule.form_data, DApiModule.module_key). \
         filter(DApiModule.is_delete == 0, DApiModule.id.in_(params)).all()
+    temp_list = []
+    for item in res:
+        today = datetime.datetime.today()
+        timestamp = int(round(time.time()*1000))
+        sys_id = db.query(DSystemModule.name, DModuleModule.name.label('mod_name')). \
+            join(DModuleModule, DSystemModule.id == DModuleModule.sys_key). \
+            filter(DSystemModule.id == item.module_key).one_or_none()
+        sql = "insert into task_result " \
+              "(sys_name, sys_module, sys_api, task_stat, operator, create_time, is_delete, timestamp) " \
+              "values (%s, %s, %s, %s, %s, %s, %s, %s)"
+        conn.insert(sql, (sys_id.name, sys_id.mod_name, item.name, '创建', operator, today, 0, timestamp))
+        temp_list.append([item.name, timestamp])
+    return res, temp_list
+
+
+# 执行新渠道接口测试
+@app.task
+def platform_runner(task_name, username, url, params: tuple, start_date, end_date, one_day, page_size, operator, db: Session):
+    conn = OperatorMysql()
     get_token = platform_login(username, url)
     if get_token[0] is True:
         today = datetime.datetime.today()
+
+        res, temp_list = platform_creat(operator, params, db)
         search_day = str(datetime.date.today())
         msg_id = str(uuid.uuid4()).replace('-', '')
         log_id = str(uuid.uuid4()).replace('-', '')
         trns_id = str(uuid.uuid4()).replace('-', '')
-        for item in res:
-            sys_id = db.query(DSystemModule.name, DModuleModule.name.label('mod_name')). \
-                join(DModuleModule, DSystemModule.id == DModuleModule.sys_key). \
-                filter(DSystemModule.id == item.module_key).one_or_none()
-            db.add(DTaskResultModule(sys_name=sys_id.name, sys_module=sys_id.mod_name, sys_api=item.name,
-                                     status='创建'))
-
+        for item, item_list in zip(res, temp_list):
+            sql = "update task_result set task_stat='运行' where sys_module=%s and create_time=%s"
+            conn.update(sql, (item_list[0], item_list[1]))
             replace_dict = {'START-DATE': start_date, 'END-DATE': end_date, 'ONE-DAY': one_day, 'TODAY': search_day}
             temp_form_data = item.form_data
             temp_headers = eval(item.headers)
@@ -96,6 +115,17 @@ def platform_runner(username, url, params: tuple, start_date, end_date, one_day,
                                          data=data_body,
                                          headers=temp_headers
                                          )
+                if response.status_code == 200:
+                    sql = "update task_result set task_stat='完成', status=%s, response=%s " \
+                          "where sys_module=%s and timestamp=%s"
+                    conn.update(sql, (response.status_code, response.content, item_list[0], item_list[1]))
+                else:
+                    sql = "update task_result set task_stat='失败', status=%s, response=%s " \
+                          "where sys_module=%s and timestamp=%s"
+                    conn.update(sql, (response.status_code, response.content, item_list[0], item_list[1]))
+        return {'result': '任务完成', 'task_name': task_name}
+    else:
+        return {'result': '获取token失败,任务未执行', 'task_name': task_name}
 
 
 @app.task

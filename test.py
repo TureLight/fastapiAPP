@@ -43,7 +43,8 @@ if __name__ == "__main__":
     # di = '{123456}'
     # y = re.match(x, di)
     # print(y)
-
+    import time
+    print(round(time.time()*1000))
     # pattern = re.compile(r'\$[a-zA-Z0-9]\w+\$')  # 查找数字
     # result1 = pattern.findall('$asd$, $asdv$, $12$ ,$a123$, $12aaaa,$ ,$123')
     # print(result1)

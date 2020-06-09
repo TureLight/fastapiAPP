@@ -6,9 +6,9 @@ from models.model_interface import ApiProject, CaseSet, ApiCase, ApiStep, TestDa
 from models.model_sys import SystemName
 from schemas.schemas_interface import (CreateProjectModel,
                                        UpdateProjectModel,
-CreateTestCaseSchema,
-TestStep,
-QuerySchema
+                                       CreateTestCaseSchema,
+                                       TestStep,
+                                       QuerySchema
                                        )
 from crud.crud_interface_project import (crud_get_project,
                                          crud_create_project,
@@ -18,11 +18,11 @@ from crud.crud_interface_project import (crud_get_project,
                                          crud_query_project,
                                          crud_create_case,
                                          crud_to_test_step,
-crud_return_project_case_total,
-crud_return_project_case,
-crud_query_case_set,
-crud_return_set_case,
-crud_return_set_case_total
+                                         crud_return_project_case_total,
+                                         crud_return_project_case,
+                                         crud_query_case_set,
+                                         crud_return_set_case,
+                                         crud_return_set_case_total
                                          )
 
 router = APIRouter()
@@ -111,7 +111,7 @@ async def to_test_step(data: TestStep):
 
 
 @router.get('/create_edit_page/')
-def create_edit_case_page(db: Session = Depends(get_db)):
+async def create_edit_case_page(db: Session = Depends(get_db)):
     try:
         res1 = crud_query_project(db)
         res2 = crud_query_case_set()
@@ -125,7 +125,7 @@ def create_edit_case_page(db: Session = Depends(get_db)):
 
 
 @router.get('/query_project_case/')
-def query_project_case(query: int, page_num: int, page_size: int):
+async def query_project_case(query: int, page_num: int, page_size: int):
     try:
         res = crud_return_project_case(query, page_num, page_size)
         total = crud_return_project_case_total(query)
@@ -137,7 +137,7 @@ def query_project_case(query: int, page_num: int, page_size: int):
 
 
 @router.get('/query_set_case/')
-def query_set_case(query: int, page_num1: int, page_size1: int):
+async def query_set_case(query: int, page_num1: int, page_size1: int):
     try:
         res = crud_return_set_case(query, page_num1, page_size1)
         total = crud_return_set_case_total(query)

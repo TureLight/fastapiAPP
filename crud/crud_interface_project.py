@@ -158,7 +158,7 @@ def crud_insert_assert(db: Session, data: CreateTestCaseSchema):
         filter(ApiStep.api_case_key == this_case_id.id).order_by(ApiStep.step).all()
     for item, key in zip(data.test_step, this_id):
         print(item, key)
-    assert_obj = db.add(TestData(assert_method=item.assert_method, exp_statue=item.exp_statue,
+    assert_obj = db.add(TestData(assert_method=item.assert_method, exp_status=item.exp_status,
                                  exp_extract=item.exp_extract, create_time=now, update_time=now,
                                  operator=data.operator, is_delete=0, api_step_key=key[0])
                         for item, key in zip(data.test_step, this_id))
@@ -169,8 +169,8 @@ def crud_create_case(db: Session, data: CreateTestCaseSchema):
     connection = pymysql.connect(host='localhost',
                                  port=3306,
                                  user='root',
-                                 password='Fr39:.Gzj+WN',
-                                 # password='zhangxin123456',
+                                 # password='Fr39:.Gzj+WN',
+                                 password='zhangxin123456',
                                  db='auto_test',
                                  charset='utf8',
                                  cursorclass=pymysql.cursors.DictCursor)
@@ -207,11 +207,11 @@ def crud_create_case(db: Session, data: CreateTestCaseSchema):
                     cursor.execute(id_sql, value)
                     res = cursor.fetchall()
                 with connection.cursor() as cursor:
-                    this_sql = "INSERT INTO `assert_data` (`assert_method`, `exp_statue`, `exp_extract`, " \
+                    this_sql = "INSERT INTO `assert_data` (`assert_method`, `exp_status`, `exp_extract`, " \
                                "`create_time`, `update_time`, `operator`, `is_delete`, `api_step_key`) " \
                                "VALUES " \
                                "(%s, %s, %s, %s, %s, %s, %s, %s)"
-                    values = (item.assert_method, item.exp_statue, item.exp_extract, now, now, data.operator, 0, res[0]['id'])
+                    values = (item.assert_method, item.exp_status, item.exp_extract, now, now, data.operator, 0, res[0]['id'])
                     cursor.execute(this_sql, values)
                     connection.commit()
                     cursor.close()
@@ -230,10 +230,10 @@ def crud_show_case_set(db: Session):
     res2 = db.query(CaseSet.id, CaseSet.name).filter(CaseSet.is_delete == 0).all()
 
 
-def crud_assert(statue, response, exp_statue, exp_response):
+def crud_assert(status, response, exp_status, exp_response):
     assert_code = True
     assert_response = True
-    if str(statue) != str(exp_statue):
+    if str(status) != str(exp_status):
         assert_code = False
     if str(response).find(str(exp_response)) == -1:
         assert_response = False
@@ -265,7 +265,7 @@ def crud_to_test_step(data: TestStep):
             res = requests.put(url=url, headers=headers, params=params, data=r_data)
         elif data.method == 'DELETE':
             res = requests.delete(url=url, headers=headers, params=params, data=r_data)
-        res1 = crud_assert(res.status_code, res.content, data.exp_statue, data.exp_extract)
+        res1 = crud_assert(res.status_code, res.content, data.exp_status, data.exp_extract)
         return {'code': res.status_code, 'response': res.text, 'assert': res1,
                 'meta': {'status': 200, 'msg': '成功！'}}
     except Exception as e:
@@ -277,7 +277,7 @@ def crud_return_project_case(query: int, page_num: int, page_size: int):
     sql = "select " \
           "`a`.id case_id, `a`.name case_name, `a`.`desc` case_desc, `as`.step step_num , `as`.name step_name, " \
           " `as`.desc step_desc, `as`.set_up, `as`.tear_down, `as`.url, `as`.method, `as`.variable, `as`.headers, " \
-          "`as`.params, `as`.form_data, `as`.json_data, `as`.need_assert, ad.assert_method, ad.exp_statue, " \
+          "`as`.params, `as`.form_data, `as`.json_data, `as`.need_assert, ad.assert_method, ad.exp_status, " \
           "ad.exp_extract " \
           "from " \
           "(api_case `a` left join api_step `as` on `a`.id = `as`.api_case_key) " \
@@ -304,7 +304,7 @@ def crud_return_set_case(query: int, page_num: int, page_size: int):
     sql = "select " \
           "`a`.id case_id, `a`.name case_name, `a`.`desc` case_desc, `as`.step step_num , `as`.name step_name, " \
           " `as`.desc step_desc, `as`.set_up, `as`.tear_down, `as`.url, `as`.method, `as`.variable, `as`.headers, " \
-          "`as`.params, `as`.form_data, `as`.json_data, `as`.need_assert, ad.assert_method, ad.exp_statue, " \
+          "`as`.params, `as`.form_data, `as`.json_data, `as`.need_assert, ad.assert_method, ad.exp_status, " \
           "ad.exp_extract " \
           "from " \
           "(api_case `a` left join api_step `as` on `a`.id = `as`.api_case_key) " \

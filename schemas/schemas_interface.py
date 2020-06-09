@@ -2,6 +2,31 @@ from typing import List
 from pydantic import BaseModel, Schema
 
 
+class DApiSchema(BaseModel):
+    id: int
+    name: str
+    method: str
+    variable: str
+    headers: str
+    params: str
+    form_data: str
+    status: int
+    response: str
+    operator: str
+
+
+class DSystemSchema(BaseModel):
+    id: int
+    name: str
+    operator: str
+
+
+class DModuleSchema(BaseModel):
+    id: int
+    name: str
+    operator: str
+
+
 class QuerySchema(BaseModel):
     query: int
     page_num: int
@@ -49,12 +74,12 @@ class StepSchema(BaseModel):
     json_data: str = None
     need_assert: int
     assert_method: str = None
-    exp_statue: str = None
+    exp_status: str = None
     exp_extract: str = None
 
 
 class AssertDataSchema(BaseModel):
-    exp_statue: str
+    exp_status: str
     exp_extract: str
 
 
@@ -68,7 +93,7 @@ class CreateTestCaseSchema(BaseModel):
 
 class TestStep(BaseModel):
     exp_extract: str = None
-    exp_statue: str = None
+    exp_status: str = None
     form_data: str = None
     headers: str = None
     host: str

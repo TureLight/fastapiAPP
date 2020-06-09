@@ -36,13 +36,20 @@ def mu():
     finally:
         print('last')
 
+
 if __name__ == "__main__":
     import re
+    # x = re.compile(r'^{.*?}$')
+    # di = '{123456}'
+    # y = re.match(x, di)
+    # print(y)
 
-    x = re.compile(r'^{.*?}$')
-    di = '{123456}'
-    y = re.match(x, di)
-    print(y)
+    # pattern = re.compile(r'\$[a-zA-Z0-9]\w+\$')  # 查找数字
+    # result1 = pattern.findall('$asd$, $asdv$, $12$ ,$a123$, $12aaaa,$ ,$123')
+    # print(result1)
+    #
+    # s = '[1,2,3,4,5]'
+    # print(list(s))
     # print(mu())
     # print(datetime.now())
     ############################本章节哈希验证用法############################

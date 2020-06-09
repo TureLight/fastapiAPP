@@ -2,6 +2,57 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Inte
 from common.database import Base
 
 
+class DApiModule(Base):
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    method = Column(String)
+    variable = Column(String)
+    headers = Column(String)
+    params = Column(String)
+    form_data = Column(String)
+    status = Column(Integer)
+    response = Column(String)
+    create_time = Column(DateTime)
+    update_time = Column(DateTime)
+    operator = Column(String, unique=True)
+    is_delete = Column(Integer)
+    module_key = Column(Integer)
+
+
+class DSystemModule(Base):
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    create_time = Column(DateTime)
+    update_time = Column(DateTime)
+    operator = Column(String, unique=True)
+    is_delete = Column(Integer)
+
+
+class DModuleModule(Base):
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    host = Column(String)
+    create_time = Column(DateTime)
+    update_time = Column(DateTime)
+    operator = Column(String, unique=True)
+    sys_key = Column(Integer)
+    is_delete = Column(Integer)
+
+
+class DTaskResultModule(Base):
+    id = Column(Integer, primary_key=True)
+    sys_name = Column(String)
+    sys_module = Column(String)
+    sys_api = Column(String)
+    task_stat = Column(String)
+    status = Column(String)
+    response = Column(String)
+    result = Column(Integer)
+    create_time = Column(DateTime)
+    operator = Column(String, unique=True)
+    is_delete = Column(Integer)
+
+
 class ApiProject(Base):
     __tablename__ = 'api_project'
 
@@ -72,9 +123,9 @@ class TestData(Base):
 
     id = Column(Integer, primary_key=True)
     assert_method = Column(String)
-    statue = Column(String)
+    status = Column(String)
     extract = Column(String)
-    exp_statue = Column(String)
+    exp_status = Column(String)
     exp_extract = Column(String)
     result = Column(Integer)
     create_time = Column(DateTime)

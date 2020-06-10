@@ -76,7 +76,7 @@ app.include_router(task_manager.router,
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app='main:app',
-                host="127.0.0.1",
+                host="192.168.3.2",
                 port=8888,
                 # reload=True
                 )

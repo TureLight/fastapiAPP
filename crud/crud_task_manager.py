@@ -46,5 +46,45 @@ def crud_run_platform_task(task_name, username, url, params: tuple, start_date, 
     tasks.platform_runner.delay(task_name, username, url, params, start_date, end_date, one_day, page_size, operator, db)
 
 
+def crud_task_result_page():
+    conn = OperatorMysql()
+    sql = " select task_name, sys_name, sys_module, sys_api, task_stat, status, response, result, " \
+          "create_time, operator " \
+          "from task_result " \
+          "where is_delete=0 " \
+          "order by create_time desc limit 100 "
+    res = conn.search(sql)
+    sql1 = "select name from user_control where is_active=1"
+    res2 = conn.search(sql1)
+    return res, res2
+
+
+def crud_search_result(date, user):
+    conn = OperatorMysql()
+    res = None
+    if date is not None and user is not None:
+        sql = " select task_name, sys_name, sys_module, sys_api, task_stat, status, response, result, " \
+              "create_time, operator " \
+          "from task_result " \
+          "where is_delete=0 and create_time=%s and operator=%s " \
+          "order by create_time desc"
+        res = conn.search(sql, (date[0:10], user))
+    elif date is not None and user is None:
+        sql = " select task_name, sys_name, sys_module, sys_api, task_stat, status, response, result, " \
+              "create_time, operator " \
+          "from task_result " \
+          "where is_delete=0 and create_time=%s " \
+          "order by create_time desc"
+        res = conn.search(sql, (date[0:10],))
+    elif date is None and user is not None:
+        sql = " select task_name, sys_name, sys_module, sys_api, task_stat, status, response, result, " \
+              "create_time, operator " \
+              "from task_result " \
+              "where is_delete=0 and operator=%s " \
+              "order by create_time desc"
+        res = conn.search(sql, (user,))
+    return res
+
+
 if __name__ == "__main__":
     print(crud_get_task_by_sys_total(1))

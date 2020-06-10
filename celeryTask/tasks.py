@@ -56,8 +56,8 @@ def platform_login(username, url):
 # 创建新渠道任务
 def platform_creat(operator, id_list: list, db: Session):
     conn = OperatorMysql()
-    res = db.query(DApiModule.id, DApiModule.name, DApiModule.path, DApiModule.method, DApiModule.variable, DApiModule.headers,
-                   DApiModule.params, DApiModule.form_data, DApiModule.module_key). \
+    res = db.query(DApiModule.id, DApiModule.name, DApiModule.path, DApiModule.method, DApiModule.variable,
+                   DApiModule.headers, DApiModule.params, DApiModule.form_data, DApiModule.module_key). \
         filter(DApiModule.is_delete == 0, DApiModule.id.in_(id_list)).all()
     temp_list = []
     for item in res:
@@ -67,7 +67,7 @@ def platform_creat(operator, id_list: list, db: Session):
             join(DModuleModule, DSystemModule.id == DModuleModule.sys_key). \
             filter(DSystemModule.id == item.module_key).one_or_none()
         sql = "insert into task_result " \
-              "(sys_name, sys_module, sys_api, task_stat, operator, create_time, is_delete, timestamp) " \
+              "(, sys_name, sys_module, sys_api, task_stat, operator, create_time, is_delete, timestamp) " \
               "values (%s, %s, %s, %s, %s, %s, %s, %s)"
         conn.insert(sql, (sys_id.name, sys_id.mod_name, item.name, '创建', operator, today, 0, timestamp))
         temp_list.append([item.name, timestamp])
@@ -76,24 +76,25 @@ def platform_creat(operator, id_list: list, db: Session):
 
 # 执行新渠道接口测试
 # @app.task
-def platform_runner(task_name, username, host, id_list: list, start_date, end_date, one_day, page_size, operator, db: Session):
+def platform_runner(task_name, username, host, id_list: list, start_date, end_date, one_day,
+                    page_size, operator, db: Session):
     conn = OperatorMysql()
     get_token = platform_login(username, host)
     if get_token[0] is True:
         today = datetime.datetime.today()
-
-        res, temp_list = platform_creat(operator, id_list, db)
         search_day = str(datetime.date.today())
-        msg_id = str(uuid.uuid4()).replace('-', '')
-        log_id = str(uuid.uuid4()).replace('-', '')
-        trns_id = str(uuid.uuid4()).replace('-', '')
+        res, temp_list = platform_creat(operator, id_list, db)
+        replace_dict = {'START-DATE': start_date, 'END-DATE': end_date, 'ONE-DAY': one_day, 'TODAY': search_day}
         for item, item_list in zip(res, temp_list):
+            msg_id = str(uuid.uuid4()).replace('-', '')
+            log_id = str(uuid.uuid4()).replace('-', '')
+            trns_id = str(uuid.uuid4()).replace('-', '')
             sql = "update task_result set task_stat='运行' where sys_module=%s and create_time=%s"
             conn.update(sql, (item_list[0], item_list[1]))
-            replace_dict = {'START-DATE': start_date, 'END-DATE': end_date, 'ONE-DAY': one_day, 'TODAY': search_day}
             temp_form_data = item.form_data
             temp_headers = eval(item.headers)
             temp_headers['Cookie'] = get_token[1]
+            url = host + item.path
             if item.params is not None:
                 pass
             if item.form_data is not None:

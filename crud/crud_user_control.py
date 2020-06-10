@@ -71,7 +71,8 @@ def check_same_accent(db: Session, accent: str):
 
 
 def get_user(db: Session, accent: str):
-    return db.query(UserControl.username, UserControl.password).filter(UserControl.username == accent).one_or_none()
+    return db.query(UserControl.username, UserControl.password, UserControl.name).\
+        filter(UserControl.username == accent).one_or_none()
 
 
 # 注册账号

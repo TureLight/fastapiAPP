@@ -43,7 +43,7 @@ async def login_for_access_token(form_data: LoginForm, db: Session = Depends(get
             access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
             access_token = create_access_token(data={"sub": form_data.username},
                                                expires_delta=access_token_expires)
-            return {'status': 200, "access": access_token, "username": form_data.username}
+            return {'status': 200, "access": access_token, "username": form_data.username, 'name': check.name}
         else:
             return {'status': 403, 'msg': '账号或密码错误!'}
     else:

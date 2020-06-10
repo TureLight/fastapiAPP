@@ -2,14 +2,20 @@ from typing import List
 from pydantic import BaseModel, Schema
 
 
+class PostDataForm(BaseModel):
+    task_name: str
+    username: str
+    password: str
+    host: str
+    start_date: str
+    end_date: str
+    one_day: str
+    page_size: str
+
+
 class RunSystemTaskSchema(BaseModel):
-    id: int
-    name: str
-    method: str
-    variable: str
-    headers: str
-    params: str
-    form_data: str
-    status: int
-    response: str
+    system_name: int
+    module_name: int
+    api_list: list
+    run_data: PostDataForm
     operator: str

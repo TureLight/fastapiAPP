@@ -1,9 +1,6 @@
-from datetime import datetime, date
 from fastapi import APIRouter, Depends, BackgroundTasks
 from common.database import get_db
 from sqlalchemy.orm import Session
-from models.model_interface import ApiProject, CaseSet, ApiCase, ApiStep, TestData
-from models.model_sys import SystemName
 from schemas.schemas_interface import (CreateProjectModel,
                                        UpdateProjectModel,
                                        CreateTestCaseSchema,

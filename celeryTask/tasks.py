@@ -1,6 +1,7 @@
 from celery import Celery
 from common.database import OperatorMysql
-from models.model_interface import DApiModule, DModuleModule, DSystemModule, DTaskResultModule
+from models.model_sys import DApiModule, DModuleModule, DSystemModule
+from models.model_task import DTaskResultModule
 from sqlalchemy.orm import Session
 import json
 import requests
@@ -53,11 +54,11 @@ def platform_login(username, url):
 
 
 # 创建新渠道任务
-def platform_creat(operator, params, db: Session):
+def platform_creat(operator, id_list: list, db: Session):
     conn = OperatorMysql()
-    res = db.query(DApiModule.id, DApiModule.name, DApiModule.method, DApiModule.variable, DApiModule.headers,
+    res = db.query(DApiModule.id, DApiModule.name, DApiModule.path, DApiModule.method, DApiModule.variable, DApiModule.headers,
                    DApiModule.params, DApiModule.form_data, DApiModule.module_key). \
-        filter(DApiModule.is_delete == 0, DApiModule.id.in_(params)).all()
+        filter(DApiModule.is_delete == 0, DApiModule.id.in_(id_list)).all()
     temp_list = []
     for item in res:
         today = datetime.datetime.today()
@@ -74,14 +75,14 @@ def platform_creat(operator, params, db: Session):
 
 
 # 执行新渠道接口测试
-@app.task
-def platform_runner(task_name, username, url, params: tuple, start_date, end_date, one_day, page_size, operator, db: Session):
+# @app.task
+def platform_runner(task_name, username, host, id_list: list, start_date, end_date, one_day, page_size, operator, db: Session):
     conn = OperatorMysql()
-    get_token = platform_login(username, url)
+    get_token = platform_login(username, host)
     if get_token[0] is True:
         today = datetime.datetime.today()
 
-        res, temp_list = platform_creat(operator, params, db)
+        res, temp_list = platform_creat(operator, id_list, db)
         search_day = str(datetime.date.today())
         msg_id = str(uuid.uuid4()).replace('-', '')
         log_id = str(uuid.uuid4()).replace('-', '')

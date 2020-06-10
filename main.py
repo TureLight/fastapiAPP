@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Header, Depends
 from starlette.middleware.cors import CORSMiddleware
 
-from api import user_control, work_report, interface_test
+from api import user_control, work_report, interface_test, task_manager
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 import jwt
@@ -62,6 +62,12 @@ app.include_router(work_report.router,
 app.include_router(interface_test.router,
                    prefix='/api/interface',
                    tags=['interface'],
+                   dependencies=[Depends(get_token_header)],
+                   # responses={'meta': {'status': 403, 'msg': 'token已过期'}}
+                   )
+app.include_router(task_manager.router,
+                   prefix='/api/task',
+                   tags=['task_manager'],
                    dependencies=[Depends(get_token_header)],
                    # responses={'meta': {'status': 403, 'msg': 'token已过期'}}
                    )

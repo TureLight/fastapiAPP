@@ -39,7 +39,7 @@ def user_menu_dict():
                                   {'id': 22, 'auth': '历史报告', 'path': 'historyWork'}
                                   ]},
                     {'id': 3, 'auth': '任务管理',
-                     'children': [{'id': 31, 'auth': '正在运行', 'path': 'checkTask'},
+                     'children': [{'id': 31, 'auth': '运行状态', 'path': 'checkTask'},
                                   {'id': 32, 'auth': '配置任务', 'path': 'setTask'},
                                   {'id': 33, 'auth': '结果查询', 'path': 'checkResult'}]
                      },

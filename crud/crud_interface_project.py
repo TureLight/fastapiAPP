@@ -169,8 +169,8 @@ def crud_create_case(db: Session, data: CreateTestCaseSchema):
     connection = pymysql.connect(host='localhost',
                                  port=3306,
                                  user='root',
-                                 password='Fr39:.Gzj+WN',
-                                 # password='123456',
+                                 # password='Fr39:.Gzj+WN',
+                                 password='123456',
                                  db='auto_test',
                                  charset='utf8',
                                  cursorclass=pymysql.cursors.DictCursor)

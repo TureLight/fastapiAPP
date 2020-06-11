@@ -7,8 +7,8 @@ import redis
 # redis_pool = redis.ConnectionPool(host='', port=6379, password='')
 # redis_info = redis.Redis(connection_pool=redis_pool)
 
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Fr39:.Gzj+WN@localhost:3306/auto_test"
-# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:123456@localhost:3306/auto_test"
+# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Fr39:.Gzj+WN@localhost:3306/auto_test"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:123456@localhost:3306/auto_test"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     # echo=True,
@@ -34,8 +34,8 @@ class OperatorMysql:
         self.connection = pymysql.connect(host='localhost',
                                           port=3306,
                                           user='root',
-                                          password='Fr39:.Gzj+WN',
-                                          # password='123456',
+                                          # password='Fr39:.Gzj+WN',
+                                          password='123456',
                                           db='auto_test',
                                           charset='utf8',
                                           cursorclass=pymysql.cursors.DictCursor)

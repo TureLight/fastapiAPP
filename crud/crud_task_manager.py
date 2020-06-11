@@ -3,6 +3,7 @@ from models.model_sys import DApiModule, DModuleModule, DSystemModule
 from models.model_task import DTaskResultModule
 from sqlalchemy.orm import Session
 from celeryTask import tasks
+import datetime
 
 
 def crud_get_task_page():
@@ -66,16 +67,16 @@ def crud_search_result(date, user):
         sql = " select task_name, sys_name, sys_module, sys_api, task_stat, status, response, result, " \
               "create_time, operator " \
           "from task_result " \
-          "where is_delete=0 and create_time=%s and operator=%s " \
+          "where is_delete=0 and date(create_time) = %s and operator=%s " \
           "order by create_time desc"
-        res = conn.search(sql, (date[0:10], user))
+        res = conn.search(sql, (date, user))
     elif date is not None and user is None:
         sql = " select task_name, sys_name, sys_module, sys_api, task_stat, status, response, result, " \
               "create_time, operator " \
           "from task_result " \
-          "where is_delete=0 and create_time=%s " \
+          "where is_delete=0 and date(create_time)= %s " \
           "order by create_time desc"
-        res = conn.search(sql, (date[0:10],))
+        res = conn.search(sql, (date,))
     elif date is None and user is not None:
         sql = " select task_name, sys_name, sys_module, sys_api, task_stat, status, response, result, " \
               "create_time, operator " \

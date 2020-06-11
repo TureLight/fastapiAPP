@@ -48,13 +48,9 @@ async def get_task_from_sys(query: int, page_num: int, page_size: int):
 
 
 @router.post('/run_task_from_sys/')
-async def run_task_from_sys(data: RunSystemTaskSchema, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+async def run_task_from_sys(data: RunSystemTaskSchema, background_tasks: BackgroundTasks):
     try:
-        task_name = data.run_data.task_name + str(round(time.time()*1000))
-        background_tasks.add_task(platform_runner, task_name=task_name, username=data.run_data.username,
-                                  host=data.run_data.host, id_list=data.api_list, start_date=data.run_data.start_date[0:10],
-                                  end_date=data.run_data.end_date[0:10], one_day=data.run_data.one_day[0:10],
-                                  operator=data.operator, page_size=data.run_data.page_size, db=db)
+        background_tasks.add_task(platform_runner, data)
         return {'meta': {'status': 202, 'msg': '任务已提交,后台已开始运行,稍后可前往任务管理页面查看运行进度'}}
     except Exception as e:
         return {'meta': {'status': 400, 'msg': '{}'.format(e)}}
